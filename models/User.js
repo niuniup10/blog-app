@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs")
+const usersCollection = require('../db').db().collection("users")
 const validator = require("validator")
 
 let User = function () {
@@ -67,6 +69,22 @@ User.prototype.validate = function() {
     })
 }
 
+User.prototype.login = function() {
+    return new Promise((resolve, reject) => {
+        this.cleanUp()
+        usersCollection.findOne({username: this.data.username}).then((attemptedUser) => {
+            if (attemptedUser && bcrypt.compareSync(this.data.password, attemptedUser.password)) {
+                this.data = attemptedUser
+                this.getAvatar()
+                resolve("Congra")
+            } else {
+                reject("Invalid Username/Password")
+            }
+        }).catch(function() {
+            reject("try again")
+        })
+    })
+}
 
 User.prototype.register = function() {
     return new Promise(async (resolve, reject) => {
