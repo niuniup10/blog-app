@@ -6,5 +6,6 @@ const followController = require('./controllers/followController')
 
 // user related routes
 router.get('/', userController.home)
+router.post('/logout', userController.logout)
 
 module.exports = router
